@@ -1036,9 +1036,9 @@ namespace BulletXNA.BulletDynamics
                         pivotBInW - m_rbB.GetCenterOfMassPosition(),
                         normal[i],
                         m_rbA.GetInvInertiaDiagLocal(),
-                        m_rbA.GetInvMass(),
+                        m_rbA.InvMass,
                         m_rbB.GetInvInertiaDiagLocal(),
-                        m_rbB.GetInvMass());
+                        m_rbB.InvMass);
                     }
                 }
 
@@ -1082,8 +1082,8 @@ namespace BulletXNA.BulletDynamics
 				
 				IndexedVector3 ftorqueAxis1 = rel_pos1.Cross(ref normal);
 				IndexedVector3 ftorqueAxis2 = rel_pos2.Cross(ref normal);
-				bodyA.InternalApplyImpulse(normal*m_rbA.GetInvMass(), m_rbA.GetInvInertiaTensorWorld()*ftorqueAxis1,impulse,null);
-				bodyB.InternalApplyImpulse(normal*m_rbB.GetInvMass(), m_rbB.GetInvInertiaTensorWorld()*ftorqueAxis2,-impulse,null);
+				bodyA.InternalApplyImpulse(normal*m_rbA.InvMass, m_rbA.GetInvInertiaTensorWorld()*ftorqueAxis1,impulse,null);
+				bodyB.InternalApplyImpulse(normal*m_rbB.InvMass, m_rbB.GetInvInertiaTensorWorld()*ftorqueAxis2,-impulse,null);
 		
 			}
 		}

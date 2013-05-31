@@ -137,12 +137,12 @@ namespace BulletXNA.BulletDynamics
 			if (body0 != null)
 			{
 				vec = IndexedVector3.Cross(solverConstraint.m_angularComponentA, rel_pos1);
-				denom0 = body0.GetInvMass() + IndexedVector3.Dot(normalAxis, vec);
+				denom0 = body0.InvMass + IndexedVector3.Dot(normalAxis, vec);
 			}
 			if (body1 != null)
 			{
 				vec = IndexedVector3.Cross(-solverConstraint.m_angularComponentB, rel_pos2);
-				denom1 = body1.GetInvMass() + IndexedVector3.Dot(normalAxis, vec);
+				denom1 = body1.InvMass + IndexedVector3.Dot(normalAxis, vec);
 			}
 
 
@@ -154,9 +154,9 @@ namespace BulletXNA.BulletDynamics
 	        solverConstraint.m_jac =  new JacobianEntry (
 		        ref rel_pos1,ref rel_pos2,ref solverConstraint.m_contactNormal,
 		        body0.getInvInertiaDiagLocal(),
-		        body0.getInvMass(),
+		        body0.InvMass,
 		        body1.getInvInertiaDiagLocal(),
-		        body1.getInvMass());
+		        body1.InvMass);
 #endif //_USE_JACOBIAN
 
 
@@ -239,12 +239,12 @@ namespace BulletXNA.BulletDynamics
 				if (rb0 != null)
 				{
 					vec = IndexedVector3.Cross(ref solverConstraint.m_angularComponentA, ref rel_pos1);
-                    denom0 = rb0.GetInvMass() + IndexedVector3.Dot(cp.m_normalWorldOnB, vec);
+                    denom0 = rb0.InvMass + IndexedVector3.Dot(cp.m_normalWorldOnB, vec);
 				}
 				if (rb1 != null)
 				{
 					vec = IndexedVector3.Cross((-solverConstraint.m_angularComponentB), rel_pos2);
-                    denom1 = rb1.GetInvMass() + IndexedVector3.Dot(cp.m_normalWorldOnB, vec);
+                    denom1 = rb1.InvMass + IndexedVector3.Dot(cp.m_normalWorldOnB, vec);
 				}
 #endif //COMPUTE_IMPULSE_DENOM
 
@@ -293,11 +293,11 @@ namespace BulletXNA.BulletDynamics
 				if (rb0 != null)
 				{
 					IndexedVector3 contactNormalTemp = solverConstraint.m_contactNormal;
-                    rb0.InternalApplyImpulse(solverConstraint.m_contactNormal * rb0.GetInvMass() * rb0.GetLinearFactor(), solverConstraint.m_angularComponentA, solverConstraint.m_appliedImpulse, "SetupContactConstraint-rb0");
+                    rb0.InternalApplyImpulse(solverConstraint.m_contactNormal * rb0.InvMass * rb0.GetLinearFactor(), solverConstraint.m_angularComponentA, solverConstraint.m_appliedImpulse, "SetupContactConstraint-rb0");
                 }
 				if (rb1 != null)
 				{
-                    rb1.InternalApplyImpulse(solverConstraint.m_contactNormal * rb1.GetInvMass() * rb1.GetLinearFactor(), -solverConstraint.m_angularComponentB, -solverConstraint.m_appliedImpulse,"SetupContactConstraint-rb1");
+                    rb1.InternalApplyImpulse(solverConstraint.m_contactNormal * rb1.InvMass * rb1.GetLinearFactor(), -solverConstraint.m_angularComponentB, -solverConstraint.m_appliedImpulse,"SetupContactConstraint-rb1");
                 }
 			}
 			else
@@ -365,11 +365,11 @@ namespace BulletXNA.BulletDynamics
 						frictionConstraint1.m_appliedImpulse = cp.m_appliedImpulseLateral1 * infoGlobal.m_warmstartingFactor;
 						if (rb0 != null)
 						{
-                            rb0.InternalApplyImpulse(frictionConstraint1.m_contactNormal * rb0.GetInvMass(), frictionConstraint1.m_angularComponentA, frictionConstraint1.m_appliedImpulse,"SetupFriction-rb0");
+                            rb0.InternalApplyImpulse(frictionConstraint1.m_contactNormal * rb0.InvMass, frictionConstraint1.m_angularComponentA, frictionConstraint1.m_appliedImpulse,"SetupFriction-rb0");
 						}
 						if (rb1 != null)
 						{
-                            rb1.InternalApplyImpulse(frictionConstraint1.m_contactNormal * rb1.GetInvMass(), -frictionConstraint1.m_angularComponentB, -frictionConstraint1.m_appliedImpulse, "SetupFriction-rb1");
+                            rb1.InternalApplyImpulse(frictionConstraint1.m_contactNormal * rb1.InvMass, -frictionConstraint1.m_angularComponentB, -frictionConstraint1.m_appliedImpulse, "SetupFriction-rb1");
 						}
 					}
 					else
@@ -388,11 +388,11 @@ namespace BulletXNA.BulletDynamics
 						frictionConstraint2.m_appliedImpulse = cp.m_appliedImpulseLateral2 * infoGlobal.m_warmstartingFactor;
 						if (rb0 != null)
 						{
-							rb0.InternalApplyImpulse(frictionConstraint2.m_contactNormal * rb0.GetInvMass(), frictionConstraint2.m_angularComponentA, frictionConstraint2.m_appliedImpulse,"SetFriction-rb0");
+							rb0.InternalApplyImpulse(frictionConstraint2.m_contactNormal * rb0.InvMass, frictionConstraint2.m_angularComponentA, frictionConstraint2.m_appliedImpulse,"SetFriction-rb0");
 						}
 						if (rb1 != null)
 						{
-							rb1.InternalApplyImpulse(frictionConstraint2.m_contactNormal * rb1.GetInvMass(), -frictionConstraint2.m_angularComponentB, -frictionConstraint2.m_appliedImpulse,"SetFriction-rb1");
+							rb1.InternalApplyImpulse(frictionConstraint2.m_contactNormal * rb1.InvMass, -frictionConstraint2.m_angularComponentB, -frictionConstraint2.m_appliedImpulse,"SetFriction-rb1");
 						}
 					}
 					else
@@ -426,7 +426,7 @@ namespace BulletXNA.BulletDynamics
 
 		//    if (rb != null)
 		//    {
-		//        solverBody.m_invMass = rb.getInvMass();
+		//        solverBody.m_invMass = rb.InvMass;
 		//        solverBody.m_originalBody = rb;
 		//        solverBody.m_angularFactor = rb.getAngularFactor();
 		//    } else
@@ -456,7 +456,7 @@ namespace BulletXNA.BulletDynamics
             RigidBody solverBodyB = colObj1 as RigidBody;//RigidBody.Upcast(colObj1);
 
 			///avoid collision response between two static objects
-			if ((solverBodyA == null || solverBodyA.GetInvMass() == 0f) && (solverBodyB == null || solverBodyB.GetInvMass() == 0f))
+			if ((solverBodyA == null || solverBodyA.InvMass == 0f) && (solverBodyB == null || solverBodyB.InvMass == 0f))
 			{
 				return;
 			}
@@ -592,7 +592,7 @@ namespace BulletXNA.BulletDynamics
 			//else
 			//{
 			//    RigidBody rb = RigidBody.upcast(body);
-			//    if (rb != null && !MathUtil.0fuzzyZero(rb.getInvMass()))
+			//    if (rb != null && !MathUtil.0fuzzyZero(rb.InvMass))
 			//    {
 			//        solverBodyA = m_tmpSolverBodyPool.Count;
 			//        SolverBody solverBody = new SolverBody();
@@ -615,11 +615,11 @@ namespace BulletXNA.BulletDynamics
             m_genericCount++;
                 float deltaImpulse = c.m_rhs - c.m_appliedImpulse * c.m_cfm;
 
-                float deltaVel1Dotn = (c.m_contactNormal.X * body1.m_deltaLinearVelocity.X) + (c.m_contactNormal.Y * body1.m_deltaLinearVelocity.Y) + (c.m_contactNormal.Z * body1.m_deltaLinearVelocity.Z) +
-                (c.m_relpos1CrossNormal.X * body1.m_deltaAngularVelocity.X) + (c.m_relpos1CrossNormal.Y * body1.m_deltaAngularVelocity.Y) + (c.m_relpos1CrossNormal.Z * body1.m_deltaAngularVelocity.Z);
+                float deltaVel1Dotn = (c.m_contactNormal.X * body1.MDeltaLinearVelocity.X) + (c.m_contactNormal.Y * body1.MDeltaLinearVelocity.Y) + (c.m_contactNormal.Z * body1.MDeltaLinearVelocity.Z) +
+                (c.m_relpos1CrossNormal.X * body1.MDeltaAngularVelocity.X) + (c.m_relpos1CrossNormal.Y * body1.MDeltaAngularVelocity.Y) + (c.m_relpos1CrossNormal.Z * body1.MDeltaAngularVelocity.Z);
 
-                float deltaVel2Dotn = -((c.m_contactNormal.X * body2.m_deltaLinearVelocity.X) + (c.m_contactNormal.Y * body2.m_deltaLinearVelocity.Y) + (c.m_contactNormal.Z * body2.m_deltaLinearVelocity.Z)) +
-                (c.m_relpos2CrossNormal.X * body2.m_deltaAngularVelocity.X) + (c.m_relpos2CrossNormal.Y * body2.m_deltaAngularVelocity.Y) + (c.m_relpos2CrossNormal.Z * body2.m_deltaAngularVelocity.Z);
+                float deltaVel2Dotn = -((c.m_contactNormal.X * body2.MDeltaLinearVelocity.X) + (c.m_contactNormal.Y * body2.MDeltaLinearVelocity.Y) + (c.m_contactNormal.Z * body2.MDeltaLinearVelocity.Z)) +
+                (c.m_relpos2CrossNormal.X * body2.MDeltaAngularVelocity.X) + (c.m_relpos2CrossNormal.Y * body2.MDeltaAngularVelocity.Y) + (c.m_relpos2CrossNormal.Z * body2.MDeltaAngularVelocity.Z);
 
 
                 float originalDeltaImpulse = deltaImpulse;
@@ -649,11 +649,11 @@ namespace BulletXNA.BulletDynamics
                     c.m_appliedImpulse = sum;
                 }
 
-                IndexedVector3 temp = new IndexedVector3(c.m_contactNormal.X * body1.m_invMass.X, c.m_contactNormal.Y * body1.m_invMass.Y, c.m_contactNormal.Z * body1.m_invMass.Z);
+                IndexedVector3 temp = new IndexedVector3(c.m_contactNormal.X * body1.MInvMass.X, c.m_contactNormal.Y * body1.MInvMass.Y, c.m_contactNormal.Z * body1.MInvMass.Z);
 
                 body1.InternalApplyImpulse(ref temp, ref c.m_angularComponentA, deltaImpulse, "ResolveSingleConstraintGeneric-body1");
 
-                temp = new IndexedVector3(-c.m_contactNormal.X * body2.m_invMass.X, -c.m_contactNormal.Y * body2.m_invMass.Y, -c.m_contactNormal.Z * body2.m_invMass.Z);
+                temp = new IndexedVector3(-c.m_contactNormal.X * body2.MInvMass.X, -c.m_contactNormal.Y * body2.MInvMass.Y, -c.m_contactNormal.Z * body2.MInvMass.Z);
 
                 body2.InternalApplyImpulse(ref temp, ref c.m_angularComponentB, deltaImpulse, "ResolveSingleConstraintGeneric-body2");
 		}
@@ -669,11 +669,11 @@ namespace BulletXNA.BulletDynamics
                 int ibreak = 0;
             }
 
-            float deltaVel1Dotn = (c.m_contactNormal.X * body1.m_deltaLinearVelocity.X) + (c.m_contactNormal.Y * body1.m_deltaLinearVelocity.Y) + (c.m_contactNormal.Z * body1.m_deltaLinearVelocity.Z) +
-            (c.m_relpos1CrossNormal.X * body1.m_deltaAngularVelocity.X) + (c.m_relpos1CrossNormal.Y * body1.m_deltaAngularVelocity.Y) + (c.m_relpos1CrossNormal.Z * body1.m_deltaAngularVelocity.Z);
+            float deltaVel1Dotn = (c.m_contactNormal.X * body1.MDeltaLinearVelocity.X) + (c.m_contactNormal.Y * body1.MDeltaLinearVelocity.Y) + (c.m_contactNormal.Z * body1.MDeltaLinearVelocity.Z) +
+            (c.m_relpos1CrossNormal.X * body1.MDeltaAngularVelocity.X) + (c.m_relpos1CrossNormal.Y * body1.MDeltaAngularVelocity.Y) + (c.m_relpos1CrossNormal.Z * body1.MDeltaAngularVelocity.Z);
 
-            float deltaVel2Dotn = -((c.m_contactNormal.X * body2.m_deltaLinearVelocity.X) + (c.m_contactNormal.Y * body2.m_deltaLinearVelocity.Y) + (c.m_contactNormal.Z * body2.m_deltaLinearVelocity.Z)) +
-            (c.m_relpos2CrossNormal.X * body2.m_deltaAngularVelocity.X) + (c.m_relpos2CrossNormal.Y * body2.m_deltaAngularVelocity.Y) + (c.m_relpos2CrossNormal.Z * body2.m_deltaAngularVelocity.Z);
+            float deltaVel2Dotn = -((c.m_contactNormal.X * body2.MDeltaLinearVelocity.X) + (c.m_contactNormal.Y * body2.MDeltaLinearVelocity.Y) + (c.m_contactNormal.Z * body2.MDeltaLinearVelocity.Z)) +
+            (c.m_relpos2CrossNormal.X * body2.MDeltaAngularVelocity.X) + (c.m_relpos2CrossNormal.Y * body2.MDeltaAngularVelocity.Y) + (c.m_relpos2CrossNormal.Z * body2.MDeltaAngularVelocity.Z);
 
 			deltaImpulse -= deltaVel1Dotn * c.m_jacDiagABInv;
 			deltaImpulse -= deltaVel2Dotn * c.m_jacDiagABInv;
@@ -690,10 +690,10 @@ namespace BulletXNA.BulletDynamics
 				c.m_appliedImpulse = sum;
 			}
 
-            IndexedVector3 temp = new IndexedVector3(c.m_contactNormal.X * body1.m_invMass.X,c.m_contactNormal.Y * body1.m_invMass.Y,c.m_contactNormal.Z * body1.m_invMass.Z);
+            IndexedVector3 temp = new IndexedVector3(c.m_contactNormal.X * body1.MInvMass.X,c.m_contactNormal.Y * body1.MInvMass.Y,c.m_contactNormal.Z * body1.MInvMass.Z);
             body1.InternalApplyImpulse(ref temp, ref c.m_angularComponentA, deltaImpulse, "ResolveSingleConstraintRowLowerLimit-body1");
 
-            temp = new IndexedVector3(-c.m_contactNormal.X * body2.m_invMass.X, -c.m_contactNormal.Y * body2.m_invMass.Y, -c.m_contactNormal.Z * body2.m_invMass.Z);
+            temp = new IndexedVector3(-c.m_contactNormal.X * body2.MInvMass.X, -c.m_contactNormal.Y * body2.MInvMass.Y, -c.m_contactNormal.Z * body2.MInvMass.Z);
             body2.InternalApplyImpulse(ref temp, ref c.m_angularComponentB, deltaImpulse, "ResolveSingleConstraintRowLowerLimit-body2");
 
 		}
@@ -722,8 +722,8 @@ namespace BulletXNA.BulletDynamics
 				{
 					c.m_appliedPushImpulse = sum;
 				}
-				body1.InternalApplyPushImpulse(c.m_contactNormal * body1.InternalGetInvMass(), c.m_angularComponentA, deltaImpulse);
-				body2.InternalApplyPushImpulse(-c.m_contactNormal * body2.InternalGetInvMass(), c.m_angularComponentB, deltaImpulse);
+				body1.InternalApplyPushImpulse(c.m_contactNormal * body1.InternalInvMass, c.m_angularComponentA, deltaImpulse);
+				body2.InternalApplyPushImpulse(-c.m_contactNormal * body2.InternalInvMass, c.m_angularComponentB, deltaImpulse);
 			}
 		}
 
@@ -1042,9 +1042,9 @@ namespace BulletXNA.BulletDynamics
                                 }
 
                                 {
-                                    IndexedVector3 iMJlA = solverConstraint.m_contactNormal * rbA.GetInvMass();
+                                    IndexedVector3 iMJlA = solverConstraint.m_contactNormal * rbA.InvMass;
                                     IndexedVector3 iMJaA = rbA.GetInvInertiaTensorWorld() * solverConstraint.m_relpos1CrossNormal;
-                                    IndexedVector3 iMJlB = solverConstraint.m_contactNormal * rbB.GetInvMass();//sign of normal?
+                                    IndexedVector3 iMJlB = solverConstraint.m_contactNormal * rbB.InvMass;//sign of normal?
                                     IndexedVector3 iMJaB = rbB.GetInvInertiaTensorWorld() * solverConstraint.m_relpos2CrossNormal;
 
                                     float sum = IndexedVector3.Dot(ref iMJlA, ref solverConstraint.m_contactNormal);

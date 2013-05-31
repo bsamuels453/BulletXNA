@@ -31,50 +31,50 @@ namespace BulletXNA.BulletDynamics
 {
     public class RigidBody : CollisionObject
     {
-        private const float MAX_ANGVEL = MathUtil.SIMD_HALF_PI;
-        public static int uniqueId = 0;
+        private const float _maxAngvel = MathUtil.SIMD_HALF_PI;
+        public static int UniqueId = 0;
 
-        private IndexedBasisMatrix	m_invInertiaTensorWorld= IndexedBasisMatrix.Identity;
-	    private IndexedVector3		m_linearVelocity;
-	    private IndexedVector3		m_angularVelocity;
-	    private float		m_inverseMass;
-        private IndexedVector3     m_linearFactor;
+        private IndexedBasisMatrix	_mInvInertiaTensorWorld= IndexedBasisMatrix.Identity;
+	    private IndexedVector3		_mLinearVelocity;
+	    private IndexedVector3		_mAngularVelocity;
+	    private float		_mInverseMass;
+        private IndexedVector3     _mLinearFactor;
 
 
-	    private IndexedVector3		m_gravity;	
-	    private IndexedVector3		m_gravity_acceleration;
-	    private IndexedVector3		m_invInertiaLocal;
-	    private IndexedVector3		m_totalForce;
-	    private IndexedVector3		m_totalTorque;
+	    private IndexedVector3		_mGravity;	
+	    private IndexedVector3		_mGravityAcceleration;
+	    private IndexedVector3		_mInvInertiaLocal;
+	    private IndexedVector3		_mTotalForce;
+	    private IndexedVector3		_mTotalTorque;
     	
-	    private float		m_linearDamping;
-	    private float		m_angularDamping;
+	    private float		_mLinearDamping;
+	    private float		_mAngularDamping;
 
-	    private bool		m_additionalDamping;
-	    private float		m_additionalDampingFactor;
-	    private float		m_additionalLinearDampingThresholdSqr;
-	    private float		m_additionalAngularDampingThresholdSqr;
-	    private float		m_additionalAngularDampingFactor;
+	    private bool		_mAdditionalDamping;
+	    private float		_mAdditionalDampingFactor;
+	    private float		_mAdditionalLinearDampingThresholdSqr;
+	    private float		_mAdditionalAngularDampingThresholdSqr;
+	    private float		_mAdditionalAngularDampingFactor;
 
-	    private float		m_linearSleepingThreshold;
-	    private float		m_angularSleepingThreshold;
+	    private float		_mLinearSleepingThreshold;
+	    private float		_mAngularSleepingThreshold;
 
 	    //m_optionalMotionState allows to automatic synchronize the world transform for active objects
-	    private IMotionState	m_optionalMotionState;
+	    private IMotionState	_mOptionalMotionState;
 
 	    //keep track of typed constraints referencing this rigid body
-	    private IList<TypedConstraint> m_constraintRefs;
+	    private IList<TypedConstraint> _mConstraintRefs;
 
-        private RigidBodyFlags m_rigidbodyFlags;
+        private RigidBodyFlags _mRigidbodyFlags;
 
-        public int m_debugBodyId;
+        public int MDebugBodyId;
 
-        public IndexedVector3 m_deltaLinearVelocity;
-        public IndexedVector3 m_deltaAngularVelocity;
-        protected IndexedVector3 m_angularFactor;
-        public IndexedVector3 m_invMass;
-        protected IndexedVector3 m_pushVelocity;
-        protected IndexedVector3 m_turnVelocity;
+        public IndexedVector3 MDeltaLinearVelocity;
+        public IndexedVector3 MDeltaAngularVelocity;
+        protected IndexedVector3 MAngularFactor;
+        public IndexedVector3 MInvMass;
+        protected IndexedVector3 MPushVelocity;
+        protected IndexedVector3 MTurnVelocity;
 
 		//static RigidBody()
 		//{
@@ -105,7 +105,7 @@ namespace BulletXNA.BulletDynamics
             base.Cleanup();
             //No constraints should point to this rigidbody
             //Remove constraints from the dynamics world before you delete the related rigidbodies. 
-            Debug.Assert(m_constraintRefs.Count == 0);
+            Debug.Assert(_mConstraintRefs.Count == 0);
 
         }
 
@@ -114,29 +114,29 @@ namespace BulletXNA.BulletDynamics
         {
 	        m_internalType=CollisionObjectTypes.CO_RIGID_BODY;
 
-	        m_linearVelocity = IndexedVector3.Zero;
-	        m_angularVelocity = IndexedVector3.Zero;
-            m_angularFactor = IndexedVector3.One;
-            m_linearFactor = IndexedVector3.One;
-	        m_gravity = IndexedVector3.Zero;
-	        m_gravity_acceleration = IndexedVector3.Zero;
-	        m_totalForce = IndexedVector3.Zero;
-	        m_totalTorque = IndexedVector3.Zero;
+	        _mLinearVelocity = IndexedVector3.Zero;
+	        _mAngularVelocity = IndexedVector3.Zero;
+            MAngularFactor = IndexedVector3.One;
+            _mLinearFactor = IndexedVector3.One;
+	        _mGravity = IndexedVector3.Zero;
+	        _mGravityAcceleration = IndexedVector3.Zero;
+	        _mTotalForce = IndexedVector3.Zero;
+	        _mTotalTorque = IndexedVector3.Zero;
 			SetDamping(constructionInfo.m_linearDamping, constructionInfo.m_angularDamping);
-	        m_linearSleepingThreshold = constructionInfo.m_linearSleepingThreshold;
-	        m_angularSleepingThreshold = constructionInfo.m_angularSleepingThreshold;
-	        m_optionalMotionState = constructionInfo.m_motionState;
+	        _mLinearSleepingThreshold = constructionInfo.m_linearSleepingThreshold;
+	        _mAngularSleepingThreshold = constructionInfo.m_angularSleepingThreshold;
+	        _mOptionalMotionState = constructionInfo.m_motionState;
 	        m_contactSolverType = 0;
 	        m_frictionSolverType = 0;
-	        m_additionalDamping = constructionInfo.m_additionalDamping;
-	        m_additionalDampingFactor = constructionInfo.m_additionalDampingFactor;
-	        m_additionalLinearDampingThresholdSqr = constructionInfo.m_additionalLinearDampingThresholdSqr;
-	        m_additionalAngularDampingThresholdSqr = constructionInfo.m_additionalAngularDampingThresholdSqr;
-	        m_additionalAngularDampingFactor = constructionInfo.m_additionalAngularDampingFactor;
+	        _mAdditionalDamping = constructionInfo.m_additionalDamping;
+	        _mAdditionalDampingFactor = constructionInfo.m_additionalDampingFactor;
+	        _mAdditionalLinearDampingThresholdSqr = constructionInfo.m_additionalLinearDampingThresholdSqr;
+	        _mAdditionalAngularDampingThresholdSqr = constructionInfo.m_additionalAngularDampingThresholdSqr;
+	        _mAdditionalAngularDampingFactor = constructionInfo.m_additionalAngularDampingFactor;
 
-	        if (m_optionalMotionState != null)
+	        if (_mOptionalMotionState != null)
 	        {
-		        m_optionalMotionState.GetWorldTransform(out m_worldTransform);
+		        _mOptionalMotionState.GetWorldTransform(out m_worldTransform);
 	        } 
             else
 	        {
@@ -152,18 +152,18 @@ namespace BulletXNA.BulletDynamics
 	        m_restitution = constructionInfo.m_restitution;
 
 	        SetCollisionShape( constructionInfo.m_collisionShape );
-	        m_debugBodyId = uniqueId++;
+	        MDebugBodyId = UniqueId++;
         	
 	        SetMassProps(constructionInfo.m_mass, constructionInfo.m_localInertia);
 	        UpdateInertiaTensor();
-            m_rigidbodyFlags = RigidBodyFlags.BT_NONE;
-            m_constraintRefs = new List<TypedConstraint>();
+            _mRigidbodyFlags = RigidBodyFlags.BT_NONE;
+            _mConstraintRefs = new List<TypedConstraint>();
 
-            m_deltaLinearVelocity = IndexedVector3.Zero;
-            m_deltaAngularVelocity = IndexedVector3.Zero;
-            m_invMass = m_inverseMass * m_linearFactor;
-            m_pushVelocity = IndexedVector3.Zero;
-            m_turnVelocity = IndexedVector3.Zero;
+            MDeltaLinearVelocity = IndexedVector3.Zero;
+            MDeltaAngularVelocity = IndexedVector3.Zero;
+            MInvMass = _mInverseMass * _mLinearFactor;
+            MPushVelocity = IndexedVector3.Zero;
+            MTurnVelocity = IndexedVector3.Zero;
 
         }
 
@@ -191,11 +191,11 @@ namespace BulletXNA.BulletDynamics
 			{
                 BulletGlobals.g_streamWriter.WriteLine("[{0}] predictIntegratedTransform pre", (String)m_userObjectPointer);
 				MathUtil.PrintMatrix(BulletGlobals.g_streamWriter,m_worldTransform);
-				MathUtil.PrintVector3(BulletGlobals.g_streamWriter,"LinearVel", m_linearVelocity);
-				MathUtil.PrintVector3(BulletGlobals.g_streamWriter,"AngularVel",m_angularVelocity);
+				MathUtil.PrintVector3(BulletGlobals.g_streamWriter,"LinearVel", _mLinearVelocity);
+				MathUtil.PrintVector3(BulletGlobals.g_streamWriter,"AngularVel",_mAngularVelocity);
 			}
 #endif			
-            TransformUtil.IntegrateTransform(ref m_worldTransform, ref m_linearVelocity, ref m_angularVelocity, timeStep, out predictedTransform);
+            TransformUtil.IntegrateTransform(ref m_worldTransform, ref _mLinearVelocity, ref _mAngularVelocity, timeStep, out predictedTransform);
             MathUtil.SanityCheckVector(m_worldTransform._basis[1]);
 
 #if DEBUG            
@@ -221,11 +221,11 @@ namespace BulletXNA.BulletDynamics
 
                 // debug steps to track NaN's
                 IndexedMatrix worldTransform = m_worldTransform;
-                TransformUtil.CalculateVelocity(ref m_interpolationWorldTransform, ref worldTransform, timeStep, out m_linearVelocity, out m_angularVelocity);
+                TransformUtil.CalculateVelocity(ref m_interpolationWorldTransform, ref worldTransform, timeStep, out _mLinearVelocity, out _mAngularVelocity);
                 SetWorldTransform(ref worldTransform);
 
-                m_interpolationLinearVelocity = m_linearVelocity;
-                m_interpolationAngularVelocity = m_angularVelocity;
+                m_interpolationLinearVelocity = _mLinearVelocity;
+                m_interpolationAngularVelocity = _mAngularVelocity;
                 SetInterpolationWorldTransform(ref m_worldTransform);
                 //printf("angular = %f %f %f\n",m_angularVelocity.getX(),m_angularVelocity.getY(),m_angularVelocity.getZ());
             }
@@ -238,7 +238,7 @@ namespace BulletXNA.BulletDynamics
                 return;
             }
 
-            ApplyCentralForce(ref m_gravity);
+            ApplyCentralForce(ref _mGravity);
         }
 
         public void SetGravity(IndexedVector3 acceleration)
@@ -248,43 +248,42 @@ namespace BulletXNA.BulletDynamics
 
         public void SetGravity(ref IndexedVector3 acceleration)
         {
-            if (m_inverseMass != 0f)
+            if (_mInverseMass != 0f)
             {
-                m_gravity = acceleration * (1f / m_inverseMass);
+                _mGravity = acceleration * (1f / _mInverseMass);
             }
-            m_gravity_acceleration = acceleration;
+            _mGravityAcceleration = acceleration;
         }
 
-	    public IndexedVector3	GetGravity()
-	    {
-		    return m_gravity_acceleration;
-    	}
+        public IndexedVector3 Gravity{
+            get { return _mGravityAcceleration; }
+        }
 
         public void SetDamping(float lin_damping, float ang_damping)
         {
-            m_linearDamping = MathUtil.Clamp(lin_damping, 0f, 1f);
-            m_angularDamping = MathUtil.Clamp(ang_damping, 0f, 1f);
+            _mLinearDamping = MathUtil.Clamp(lin_damping, 0f, 1f);
+            _mAngularDamping = MathUtil.Clamp(ang_damping, 0f, 1f);
 
         }
 
 	    public float GetLinearDamping()
 	    {
-		    return m_linearDamping;
+		    return _mLinearDamping;
 	    }
 
 	    public float GetAngularDamping()
 	    {
-		    return m_angularDamping;
+		    return _mAngularDamping;
 	    }
 
 	    public float GetLinearSleepingThreshold()
 	    {
-		    return m_linearSleepingThreshold;
+		    return _mLinearSleepingThreshold;
 	    }
 
 	    public float GetAngularSleepingThreshold() 
 	    {
-		    return m_angularSleepingThreshold;
+		    return _mAngularSleepingThreshold;
 	    }
 
 	    public void	ApplyDamping(float timeStep)
@@ -297,60 +296,60 @@ namespace BulletXNA.BulletDynamics
 	        m_linearVelocity *= GEN_clamped((float(1.) - timeStep * m_linearDamping), (float)float(0.0), (float)float(1.0));
 	        m_angularVelocity *= GEN_clamped((float(1.) - timeStep * m_angularDamping), (float)float(0.0), (float)float(1.0));
         #else
-	        m_linearVelocity *= (float)Math.Pow((1f-m_linearDamping), timeStep);
-            m_angularVelocity *= (float)Math.Pow((1f - m_angularDamping), timeStep);
-            MathUtil.SanityCheckVector(ref m_linearVelocity);
-            MathUtil.SanityCheckVector(ref m_angularVelocity);
+	        _mLinearVelocity *= (float)Math.Pow((1f-_mLinearDamping), timeStep);
+            _mAngularVelocity *= (float)Math.Pow((1f - _mAngularDamping), timeStep);
+            MathUtil.SanityCheckVector(ref _mLinearVelocity);
+            MathUtil.SanityCheckVector(ref _mAngularVelocity);
 #endif
 
-	        if (m_additionalDamping)
+	        if (_mAdditionalDamping)
 	        {
 		        //Additional damping can help avoiding lowpass jitter motion, help stability for ragdolls etc.
 		        //Such damping is undesirable, so once the overall simulation quality of the rigid body dynamics system has improved, this should become obsolete
-		        if ((m_angularVelocity.LengthSquared() < m_additionalAngularDampingThresholdSqr) &&
-			        (m_linearVelocity.LengthSquared() < m_additionalLinearDampingThresholdSqr))
+		        if ((_mAngularVelocity.LengthSquared() < _mAdditionalAngularDampingThresholdSqr) &&
+			        (_mLinearVelocity.LengthSquared() < _mAdditionalLinearDampingThresholdSqr))
 		        {
-			        m_angularVelocity *= m_additionalDampingFactor;
-			        m_linearVelocity *= m_additionalDampingFactor;
+			        _mAngularVelocity *= _mAdditionalDampingFactor;
+			        _mLinearVelocity *= _mAdditionalDampingFactor;
 		        }
 
 
-                MathUtil.SanityCheckVector(ref m_linearVelocity);
-                MathUtil.SanityCheckVector(ref m_angularVelocity);
+                MathUtil.SanityCheckVector(ref _mLinearVelocity);
+                MathUtil.SanityCheckVector(ref _mAngularVelocity);
                 
-                float speed = m_linearVelocity.Length();
-		        if (speed < m_linearDamping)
+                float speed = _mLinearVelocity.Length();
+		        if (speed < _mLinearDamping)
 		        {
 			        float dampVel = 0.005f;
 			        if (speed > dampVel)
 			        {
-				        IndexedVector3 dir = m_linearVelocity;
+				        IndexedVector3 dir = _mLinearVelocity;
                         dir.Normalize();
-				        m_linearVelocity -=  dir * dampVel;
+				        _mLinearVelocity -=  dir * dampVel;
 			        } 
                     else
 			        {
-				        m_linearVelocity = IndexedVector3.Zero;
+				        _mLinearVelocity = IndexedVector3.Zero;
 			        }
 		        }
 
-		        float angSpeed = m_angularVelocity.Length();
-		        if (angSpeed < m_angularDamping)
+		        float angSpeed = _mAngularVelocity.Length();
+		        if (angSpeed < _mAngularDamping)
 		        {
 			        float angDampVel = 0.005f;
 			        if (angSpeed > angDampVel)
 			        {
-				        IndexedVector3 dir = m_angularVelocity;
+				        IndexedVector3 dir = _mAngularVelocity;
                         dir.Normalize();
-				        m_angularVelocity -=  dir * angDampVel;
+				        _mAngularVelocity -=  dir * angDampVel;
 			        } else
 			        {
-                        m_angularVelocity = IndexedVector3.Zero;
+                        _mAngularVelocity = IndexedVector3.Zero;
 			        }
 		        }
 	        }
-            MathUtil.SanityCheckVector(ref m_linearVelocity);
-            MathUtil.SanityCheckVector(ref m_angularVelocity);
+            MathUtil.SanityCheckVector(ref _mLinearVelocity);
+            MathUtil.SanityCheckVector(ref _mAngularVelocity);
 
         }
 
@@ -364,42 +363,41 @@ namespace BulletXNA.BulletDynamics
 	        if (MathUtil.FuzzyZero(mass))
 	        {
 		        m_collisionFlags |= CollisionFlags.CF_STATIC_OBJECT;
-		        m_inverseMass = 0f;
+		        _mInverseMass = 0f;
 	        } 
             else
 	        {
 		        m_collisionFlags &= (~CollisionFlags.CF_STATIC_OBJECT);
-		        m_inverseMass = 1.0f / mass;
+		        _mInverseMass = 1.0f / mass;
 	        }
 
-			m_gravity = mass * m_gravity_acceleration;
+			_mGravity = mass * _mGravityAcceleration;
 
-            m_invInertiaLocal = new IndexedVector3(
+            _mInvInertiaLocal = new IndexedVector3(
                             (inertia.X != 0f) ? 1f / inertia.X : 0f,
                            (inertia.Y !=  0f) ? 1f / inertia.Y : 0f,
                            (inertia.Z !=  0f) ? 1f / inertia.Z : 0f);
-            m_invMass = m_linearFactor * m_inverseMass;
+            MInvMass = _mLinearFactor * _mInverseMass;
         }
 	
         public IndexedVector3 GetLinearFactor()
 	    {
-		    return m_linearFactor;
+		    return _mLinearFactor;
 	    }
 
         public void SetLinearFactor(IndexedVector3 linearFactor)
 	    {
-		    m_linearFactor = linearFactor;
-		    m_invMass = m_linearFactor*m_inverseMass;
+		    _mLinearFactor = linearFactor;
+		    MInvMass = _mLinearFactor*_mInverseMass;
 	    }
 
-	    public float GetInvMass() 
-        { 
-            return m_inverseMass; 
+        public float InvMass{
+            get { return _mInverseMass; }
         }
-	    
+
         public IndexedBasisMatrix GetInvInertiaTensorWorld()
         { 
-		    return m_invInertiaTensorWorld; 
+		    return _mInvInertiaTensorWorld; 
 	    }
 
         public void IntegrateVelocities(float step)
@@ -411,30 +409,30 @@ namespace BulletXNA.BulletDynamics
 			if (BulletGlobals.g_streamWriter != null && BulletGlobals.debugRigidBody)
 			{
                 BulletGlobals.g_streamWriter.WriteLine(String.Format("[{0}] RigidBody integrateVelocities", (String)m_userObjectPointer));
-				MathUtil.PrintVector3(BulletGlobals.g_streamWriter, "integrate LinVel pre", m_linearVelocity);
-				MathUtil.PrintVector3(BulletGlobals.g_streamWriter, "integrate AngVel pre", m_angularVelocity);
+				MathUtil.PrintVector3(BulletGlobals.g_streamWriter, "integrate LinVel pre", _mLinearVelocity);
+				MathUtil.PrintVector3(BulletGlobals.g_streamWriter, "integrate AngVel pre", _mAngularVelocity);
 			}
 #endif
 
 
-	        m_linearVelocity += m_totalForce * (m_inverseMass * step);
-            MathUtil.SanityCheckVector(ref m_linearVelocity);
-            m_angularVelocity += m_invInertiaTensorWorld * m_totalTorque * step;
-            MathUtil.SanityCheckVector(ref m_angularVelocity);
+	        _mLinearVelocity += _mTotalForce * (_mInverseMass * step);
+            MathUtil.SanityCheckVector(ref _mLinearVelocity);
+            _mAngularVelocity += _mInvInertiaTensorWorld * _mTotalTorque * step;
+            MathUtil.SanityCheckVector(ref _mAngularVelocity);
         
 	        /// clamp angular velocity. collision calculations will fail on higher angular velocities	
-	        float angvel = m_angularVelocity.Length();
-	        if (angvel*step > MAX_ANGVEL)
+	        float angvel = _mAngularVelocity.Length();
+	        if (angvel*step > _maxAngvel)
 	        {
-		        m_angularVelocity *= (MAX_ANGVEL/step) /angvel;
+		        _mAngularVelocity *= (_maxAngvel/step) /angvel;
 	        }
-            MathUtil.SanityCheckVector(ref m_angularVelocity);
+            MathUtil.SanityCheckVector(ref _mAngularVelocity);
 
 #if DEBUG
 			if (BulletGlobals.g_streamWriter != null && BulletGlobals.debugRigidBody)
 			{
-				MathUtil.PrintVector3(BulletGlobals.g_streamWriter, "integrate LinVel post", m_linearVelocity);
-				MathUtil.PrintVector3(BulletGlobals.g_streamWriter, "integrate AngVel post", m_angularVelocity);
+				MathUtil.PrintVector3(BulletGlobals.g_streamWriter, "integrate LinVel post", _mLinearVelocity);
+				MathUtil.PrintVector3(BulletGlobals.g_streamWriter, "integrate AngVel post", _mAngularVelocity);
 			}
 #endif			
         }
@@ -472,33 +470,33 @@ namespace BulletXNA.BulletDynamics
 
 	    public void ApplyCentralForce(ref IndexedVector3 force)
 	    {
-            m_totalForce += force * m_linearFactor;
+            _mTotalForce += force * _mLinearFactor;
         }
 
 	    public IndexedVector3 GetTotalForce()
 	    {
-		    return m_totalForce;
+		    return _mTotalForce;
 	    }
 
 	    public IndexedVector3 GetTotalTorque()
 	    {
-		    return m_totalTorque;
+		    return _mTotalTorque;
 	    }
     
 	    public IndexedVector3 GetInvInertiaDiagLocal()
 	    {
-		    return m_invInertiaLocal;
+		    return _mInvInertiaLocal;
 	    }
 
 	    public void SetInvInertiaDiagLocal(ref IndexedVector3 diagInvInertia)
 	    {
-		    m_invInertiaLocal = diagInvInertia;
+		    _mInvInertiaLocal = diagInvInertia;
 	    }
 
 	    public void	SetSleepingThresholds(float linear,float angular)
 	    {
-		    m_linearSleepingThreshold = linear;
-		    m_angularSleepingThreshold = angular;
+		    _mLinearSleepingThreshold = linear;
+		    _mAngularSleepingThreshold = angular;
 	    }
 
         public void ApplyTorque(IndexedVector3 torque)
@@ -508,22 +506,22 @@ namespace BulletXNA.BulletDynamics
 
 	    public void	ApplyTorque(ref IndexedVector3 torque)
 	    {
-            m_totalTorque += torque * m_angularFactor;
+            _mTotalTorque += torque * MAngularFactor;
         }
 	
 	    public void	ApplyForce(ref IndexedVector3 force, ref IndexedVector3 rel_pos) 
 	    {
             ApplyCentralForce(ref force);
             IndexedVector3 tempTorque = IndexedVector3.Cross(rel_pos,force);
-            tempTorque *= m_angularFactor;
-            ApplyTorque(IndexedVector3.Cross(rel_pos,(force * m_linearFactor)));
+            tempTorque *= MAngularFactor;
+            ApplyTorque(IndexedVector3.Cross(rel_pos,(force * _mLinearFactor)));
         }
 	
 	    public void ApplyCentralImpulse(ref IndexedVector3 impulse)
 	    {
 
-            m_linearVelocity += impulse * m_linearFactor * m_inverseMass;
-            MathUtil.SanityCheckVector(ref m_linearVelocity);
+            _mLinearVelocity += impulse * _mLinearFactor * _mInverseMass;
+            MathUtil.SanityCheckVector(ref _mLinearVelocity);
 	    }
 
         public void ApplyTorqueImpulse(IndexedVector3 torque)
@@ -533,7 +531,7 @@ namespace BulletXNA.BulletDynamics
 
   	    public void ApplyTorqueImpulse(ref IndexedVector3 torque)
 	    {
-            m_angularVelocity += m_invInertiaTensorWorld * torque * m_angularFactor;
+            _mAngularVelocity += _mInvInertiaTensorWorld * torque * MAngularFactor;
         }
 
         public void ApplyImpulse(IndexedVector3 impulse, IndexedVector3 rel_pos)
@@ -543,12 +541,12 @@ namespace BulletXNA.BulletDynamics
 	
 	    public void ApplyImpulse(ref IndexedVector3 impulse, ref IndexedVector3 rel_pos) 
 	    {
-		    if (m_inverseMass != 0f)
+		    if (_mInverseMass != 0f)
 		    {
 			    ApplyCentralImpulse(ref impulse);
-			    if (m_angularFactor.LengthSquared() > 0f)
+			    if (MAngularFactor.LengthSquared() > 0f)
 			    {
-				    ApplyTorqueImpulse(IndexedVector3.Cross(rel_pos,(impulse*m_linearFactor)));
+				    ApplyTorqueImpulse(IndexedVector3.Cross(rel_pos,(impulse*_mLinearFactor)));
 			    }
 		    }
 	    }
@@ -565,8 +563,8 @@ namespace BulletXNA.BulletDynamics
 	
 	    public void ClearForces() 
 	    {
-		    m_totalForce = IndexedVector3.Zero;
-		    m_totalTorque = IndexedVector3.Zero;
+		    _mTotalForce = IndexedVector3.Zero;
+		    _mTotalTorque = IndexedVector3.Zero;
 	    }
 	
 	    public void UpdateInertiaTensor()
@@ -575,17 +573,17 @@ namespace BulletXNA.BulletDynamics
 			if (BulletGlobals.g_streamWriter != null && BulletGlobals.debugRigidBody)
             {
                 BulletGlobals.g_streamWriter.WriteLine(String.Format("[{0}] RigidBody updateInertiaTensor",(String)m_userObjectPointer));
-                MathUtil.PrintVector3(BulletGlobals.g_streamWriter, "invInertiaLocal", m_invInertiaLocal);
+                MathUtil.PrintVector3(BulletGlobals.g_streamWriter, "invInertiaLocal", _mInvInertiaLocal);
                 MathUtil.PrintMatrix(BulletGlobals.g_streamWriter, m_worldTransform);
-                MathUtil.PrintMatrix(BulletGlobals.g_streamWriter, m_worldTransform._basis.Scaled(ref m_invInertiaLocal));
+                MathUtil.PrintMatrix(BulletGlobals.g_streamWriter, m_worldTransform._basis.Scaled(ref _mInvInertiaLocal));
                 MathUtil.PrintMatrix(BulletGlobals.g_streamWriter, m_worldTransform._basis.Transpose());
             }
 #endif            
-            m_invInertiaTensorWorld = m_worldTransform._basis.Scaled(ref m_invInertiaLocal) * m_worldTransform._basis.Transpose();
+            _mInvInertiaTensorWorld = m_worldTransform._basis.Scaled(ref _mInvInertiaLocal) * m_worldTransform._basis.Transpose();
 #if DEBUG
 			if (BulletGlobals.g_streamWriter != null && BulletGlobals.debugRigidBody)
             {
-                MathUtil.PrintMatrix(BulletGlobals.g_streamWriter,m_invInertiaTensorWorld);
+                MathUtil.PrintMatrix(BulletGlobals.g_streamWriter,_mInvInertiaTensorWorld);
             }
 #endif
         }
@@ -604,15 +602,15 @@ namespace BulletXNA.BulletDynamics
         { 
 		    return m_worldTransform; 
 	    }
-	
+
         public IndexedVector3 GetLinearVelocity()
         {
-		    return m_linearVelocity; 
+		    return _mLinearVelocity; 
 	    }
 
 	    public IndexedVector3 GetAngularVelocity() 
         { 
-		    return m_angularVelocity; 
+		    return _mAngularVelocity; 
 	    }
 
         public void SetLinearVelocity(IndexedVector3 lin_vel)
@@ -622,8 +620,8 @@ namespace BulletXNA.BulletDynamics
 
 	    public void SetLinearVelocity(ref IndexedVector3 lin_vel)
 	    { 
-		    m_linearVelocity = lin_vel;
-            MathUtil.SanityCheckVector(ref m_linearVelocity);
+		    _mLinearVelocity = lin_vel;
+            MathUtil.SanityCheckVector(ref _mLinearVelocity);
         }
 
         public void SetAngularVelocity(IndexedVector3 ang_vel)
@@ -633,18 +631,18 @@ namespace BulletXNA.BulletDynamics
 
 	    public void SetAngularVelocity(ref IndexedVector3 ang_vel) 
 	    { 
-		    m_angularVelocity = ang_vel; 
+		    _mAngularVelocity = ang_vel; 
 	    }
 
 	    public IndexedVector3 GetVelocityInLocalPoint(ref IndexedVector3 rel_pos)
 	    {
 		    //we also calculate lin/ang velocity for kinematic objects
 
-            IndexedVector3 temp = new IndexedVector3(m_angularVelocity.Y * rel_pos.Z - m_angularVelocity.Z * rel_pos.Y,
-                m_angularVelocity.Z * rel_pos.X - m_angularVelocity.X * rel_pos.Z,
-                m_angularVelocity.X * rel_pos.Y - m_angularVelocity.Y * rel_pos.X);
+            IndexedVector3 temp = new IndexedVector3(_mAngularVelocity.Y * rel_pos.Z - _mAngularVelocity.Z * rel_pos.Y,
+                _mAngularVelocity.Z * rel_pos.X - _mAngularVelocity.X * rel_pos.Z,
+                _mAngularVelocity.X * rel_pos.Y - _mAngularVelocity.Y * rel_pos.X);
 
-            return new IndexedVector3(m_linearVelocity.X + temp.X, m_linearVelocity.Y + temp.Y, m_linearVelocity.Z + temp.Z);
+            return new IndexedVector3(_mLinearVelocity.X + temp.X, _mLinearVelocity.Y + temp.Y, _mLinearVelocity.Z + temp.Z);
 
             //return m_linearVelocity + IndexedVector3.Cross(m_angularVelocity,rel_pos);
 
@@ -656,7 +654,6 @@ namespace BulletXNA.BulletDynamics
 	    {
 		    m_worldTransform._origin += v; 
 	    }
-
 	
 	    public void	GetAabb(out IndexedVector3 aabbMin,out IndexedVector3 aabbMax)
         {
@@ -671,7 +668,7 @@ namespace BulletXNA.BulletDynamics
 
             IndexedVector3 vec = (c0 * GetInvInertiaTensorWorld()).Cross(ref r0);
 
-		    return m_inverseMass + IndexedVector3.Dot(normal,vec);
+		    return _mInverseMass + IndexedVector3.Dot(normal,vec);
 
 	    }
 
@@ -688,8 +685,8 @@ namespace BulletXNA.BulletDynamics
 			    return;
             }
 		    
-            if ((GetLinearVelocity().LengthSquared() < m_linearSleepingThreshold*m_linearSleepingThreshold) &&
-			    (GetAngularVelocity().LengthSquared() < m_angularSleepingThreshold*m_angularSleepingThreshold))
+            if ((GetLinearVelocity().LengthSquared() < _mLinearSleepingThreshold*_mLinearSleepingThreshold) &&
+			    (GetAngularVelocity().LengthSquared() < _mAngularSleepingThreshold*_mAngularSleepingThreshold))
 		    {
 			    m_deactivationTime += timeStep;
 		    } 
@@ -740,13 +737,13 @@ namespace BulletXNA.BulletDynamics
 	    //btMotionState allows to automatic synchronize the world transform for active objects
 	    public IMotionState	GetMotionState()
 	    {
-		    return m_optionalMotionState;
+		    return _mOptionalMotionState;
 	    }
 
 	    public void	SetMotionState(IMotionState motionState)
 	    {
-		    m_optionalMotionState = motionState;
-		    if (m_optionalMotionState != null)
+		    _mOptionalMotionState = motionState;
+		    if (_mOptionalMotionState != null)
             {
                 motionState.GetWorldTransform(out m_worldTransform);
             }
@@ -758,7 +755,7 @@ namespace BulletXNA.BulletDynamics
 
 	    public void	SetAngularFactor(float angFac)
 	    {
-		    m_angularFactor = new IndexedVector3(angFac);
+		    MAngularFactor = new IndexedVector3(angFac);
 	    }
 
         public void SetAngularFactor(IndexedVector3 angFac)
@@ -768,42 +765,42 @@ namespace BulletXNA.BulletDynamics
 
         public void SetAngularFactor(ref IndexedVector3 angFac)
 	    {
-		    m_angularFactor = angFac;
+		    MAngularFactor = angFac;
 	    }
 
 	    public IndexedVector3 GetAngularFactor()
 	    {
-		    return m_angularFactor;
+		    return MAngularFactor;
 	    }
 
         public void	SetFlags(RigidBodyFlags flags)
 	    {
-		    m_rigidbodyFlags = flags;
+		    _mRigidbodyFlags = flags;
 	    }
 
 	    public RigidBodyFlags GetFlags()
 	    {
-		    return m_rigidbodyFlags;
+		    return _mRigidbodyFlags;
 	    }
 
 	public IndexedVector3 GetDeltaLinearVelocity()
 	{
-		return m_deltaLinearVelocity;
+		return MDeltaLinearVelocity;
 	}
 
 	public IndexedVector3 GetDeltaAngularVelocity() 
 	{
-		return m_deltaAngularVelocity;
+		return MDeltaAngularVelocity;
 	}
 
 	public IndexedVector3 GetPushVelocity()
 	{
-		return m_pushVelocity;
+		return MPushVelocity;
 	}
 
 	public IndexedVector3 GetTurnVelocity() 
 	{
-		return m_turnVelocity;
+		return MTurnVelocity;
 	}
 
 
@@ -819,9 +816,9 @@ namespace BulletXNA.BulletDynamics
 	        if (otherRb == null)
 		        return true;
 
-	        for (int i = 0; i < m_constraintRefs.Count; ++i)
+	        for (int i = 0; i < _mConstraintRefs.Count; ++i)
 	        {
-		        TypedConstraint c = m_constraintRefs[i];
+		        TypedConstraint c = _mConstraintRefs[i];
                 if (c.IsEnabled())
                 {
                     if (c.GetRigidBodyA() == otherRb || c.GetRigidBodyB() == otherRb)
@@ -837,28 +834,28 @@ namespace BulletXNA.BulletDynamics
 
         public void AddConstraintRef(TypedConstraint c)
         {
-            if (!m_constraintRefs.Contains(c))
+            if (!_mConstraintRefs.Contains(c))
             {
-                m_constraintRefs.Add(c);
+                _mConstraintRefs.Add(c);
             }
 
             m_checkCollideWith = true;
         }
         public void RemoveConstraintRef(TypedConstraint c)
         {
-            m_constraintRefs.Remove(c);
-            m_checkCollideWith = m_constraintRefs.Count > 0;
+            _mConstraintRefs.Remove(c);
+            m_checkCollideWith = _mConstraintRefs.Count > 0;
 
         }
 
 	    public TypedConstraint GetConstraintRef(int index)
 	    {
-		    return m_constraintRefs[index];
+		    return _mConstraintRefs[index];
 	    }
 
 	    public int GetNumConstraintRefs()
 	    {
-		    return m_constraintRefs.Count;
+		    return _mConstraintRefs.Count;
 	    }
 
         	////////////////////////////////////////////////
@@ -866,65 +863,64 @@ namespace BulletXNA.BulletDynamics
     		
 	    public IndexedVector3 InternalGetDeltaLinearVelocity()
 	    {
-		    return m_deltaLinearVelocity;
+		    return MDeltaLinearVelocity;
 	    }
 
         public void InternalSetDeltaLinearVelocity(ref IndexedVector3 v)
         {
-            m_deltaLinearVelocity = v;
-            MathUtil.SanityCheckVector(ref m_deltaLinearVelocity);
+            MDeltaLinearVelocity = v;
+            MathUtil.SanityCheckVector(ref MDeltaLinearVelocity);
         }
 
 	    public IndexedVector3 InternalGetDeltaAngularVelocity()
 	    {
-		    return m_deltaAngularVelocity;
+		    return MDeltaAngularVelocity;
         }
 
         public void InternalSetDeltaAngularVelocity(ref IndexedVector3 v)
         {
-            m_deltaAngularVelocity = v;
-            MathUtil.SanityCheckVector(ref m_deltaAngularVelocity);
+            MDeltaAngularVelocity = v;
+            MathUtil.SanityCheckVector(ref MDeltaAngularVelocity);
         }
 
 	    public IndexedVector3 InternalGetAngularFactor()
 	    {
-		    return m_angularFactor;
+		    return MAngularFactor;
 	    }
 
-	    public IndexedVector3 InternalGetInvMass()
-	    {
-		    return m_invMass;
+	    public IndexedVector3 InternalInvMass {
+            get { return MInvMass; }
 	    }
     	
 	    public IndexedVector3 InternalGetPushVelocity()
 	    {
-		    return m_pushVelocity;
+		    return MPushVelocity;
 	    }
 
 	    public IndexedVector3 InternalGetTurnVelocity()
 	    {
-		    return m_turnVelocity;
+		    return MTurnVelocity;
 	    }
 
         public void InternalSetTurnVelocity(ref IndexedVector3 velocity)
         {
-            m_turnVelocity = velocity;
+            MTurnVelocity = velocity;
         }
 
         public void InternalSetPushVelocity(ref IndexedVector3 velocity)
         {
-            m_pushVelocity = velocity;
+            MPushVelocity = velocity;
         }
 
 
 	    public void	InternalGetVelocityInLocalPointObsolete(ref IndexedVector3 rel_pos, ref IndexedVector3 velocity )
 	    {
-		    velocity = GetLinearVelocity()+m_deltaLinearVelocity + IndexedVector3.Cross((GetAngularVelocity()+m_deltaAngularVelocity),rel_pos);
+		    velocity = GetLinearVelocity()+MDeltaLinearVelocity + IndexedVector3.Cross((GetAngularVelocity()+MDeltaAngularVelocity),rel_pos);
 	    }
 
 	    public void	InternalGetAngularVelocity(ref IndexedVector3 angVel)
 	    {
-		    angVel = GetAngularVelocity()+m_deltaAngularVelocity;
+		    angVel = GetAngularVelocity()+MDeltaAngularVelocity;
 	    }
 
 	    //Optimization for the iterative solver: avoid calculating constant terms involving inertia, normal, relative position
@@ -939,22 +935,22 @@ namespace BulletXNA.BulletDynamics
 				BulletGlobals.g_streamWriter.WriteLine("magnitude [{0:0.00000000}]", impulseMagnitude);
 			}
 #endif
-		    if (m_inverseMass != 0f)
+		    if (_mInverseMass != 0f)
             {   
-                m_deltaLinearVelocity.X += impulseMagnitude * linearComponent.X;
-                m_deltaLinearVelocity.Y += impulseMagnitude * linearComponent.Y;
-                m_deltaLinearVelocity.Z += impulseMagnitude * linearComponent.Z;
+                MDeltaLinearVelocity.X += impulseMagnitude * linearComponent.X;
+                MDeltaLinearVelocity.Y += impulseMagnitude * linearComponent.Y;
+                MDeltaLinearVelocity.Z += impulseMagnitude * linearComponent.Z;
                 //m_deltaLinearVelocity += linearComponent*impulseMagnitude;
                 
-                m_deltaAngularVelocity.X += angularComponent.X * (impulseMagnitude * m_angularFactor.X);
-                m_deltaAngularVelocity.Y += angularComponent.Y  * (impulseMagnitude * m_angularFactor.Y);
-                m_deltaAngularVelocity.Z += angularComponent.Z *(impulseMagnitude * m_angularFactor.Z);
+                MDeltaAngularVelocity.X += angularComponent.X * (impulseMagnitude * MAngularFactor.X);
+                MDeltaAngularVelocity.Y += angularComponent.Y  * (impulseMagnitude * MAngularFactor.Y);
+                MDeltaAngularVelocity.Z += angularComponent.Z *(impulseMagnitude * MAngularFactor.Z);
 
                 //m_deltaAngularVelocity += angularComponent*(impulseMagnitude*m_angularFactor);
 
 
-                MathUtil.SanityCheckVector(ref m_deltaLinearVelocity);
-                MathUtil.SanityCheckVector(ref m_deltaAngularVelocity);
+                MathUtil.SanityCheckVector(ref MDeltaLinearVelocity);
+                MathUtil.SanityCheckVector(ref MDeltaAngularVelocity);
             }
 
 	    }
@@ -967,19 +963,19 @@ namespace BulletXNA.BulletDynamics
 
         public void InternalApplyPushImpulse(ref IndexedVector3 linearComponent, ref IndexedVector3 angularComponent,float impulseMagnitude)
 	    {
-		    if (m_inverseMass != 0f)
+		    if (_mInverseMass != 0f)
 		    {
-			    m_pushVelocity += linearComponent*impulseMagnitude;
-			    m_turnVelocity += angularComponent*(impulseMagnitude*m_angularFactor);
+			    MPushVelocity += linearComponent*impulseMagnitude;
+			    MTurnVelocity += angularComponent*(impulseMagnitude*MAngularFactor);
 		    }
 	    }
     	
 	    public void	InternalWritebackVelocity()
 	    {
-		    if (m_inverseMass != 0f)
+		    if (_mInverseMass != 0f)
 		    {
-			    SetLinearVelocity(GetLinearVelocity()+ m_deltaLinearVelocity);
-			    SetAngularVelocity(GetAngularVelocity()+m_deltaAngularVelocity);
+			    SetLinearVelocity(GetLinearVelocity()+ MDeltaLinearVelocity);
+			    SetAngularVelocity(GetAngularVelocity()+MDeltaAngularVelocity);
 			    //m_deltaLinearVelocity = IndexedVector3.Zero;
                 //m_deltaAngularVelocity = IndexedVector3.Zero;
 			    //m_originalBody->setCompanionId(-1);
@@ -996,19 +992,19 @@ namespace BulletXNA.BulletDynamics
 			{
 				BulletGlobals.g_streamWriter.WriteLine(String.Format("[{0}] internalWritebackVelocity ",(String)m_userObjectPointer));
 				MathUtil.PrintVector3(BulletGlobals.g_streamWriter,"LinearVelocity",GetLinearVelocity());
-				MathUtil.PrintVector3(BulletGlobals.g_streamWriter, "DeltaLinearVelocity", m_deltaLinearVelocity);
+				MathUtil.PrintVector3(BulletGlobals.g_streamWriter, "DeltaLinearVelocity", MDeltaLinearVelocity);
 				MathUtil.PrintVector3(BulletGlobals.g_streamWriter, "AngularVelocity", GetAngularVelocity());
-				MathUtil.PrintVector3(BulletGlobals.g_streamWriter, "DeltaAngularVelocity", m_deltaAngularVelocity);
+				MathUtil.PrintVector3(BulletGlobals.g_streamWriter, "DeltaAngularVelocity", MDeltaAngularVelocity);
 			}
 #endif
-	        if (m_inverseMass != 0f)
+	        if (_mInverseMass != 0f)
 	        {
-		        SetLinearVelocity(GetLinearVelocity()+ m_deltaLinearVelocity);
-		        SetAngularVelocity(GetAngularVelocity()+m_deltaAngularVelocity);
+		        SetLinearVelocity(GetLinearVelocity()+ MDeltaLinearVelocity);
+		        SetAngularVelocity(GetAngularVelocity()+MDeltaAngularVelocity);
         		
 		        //correct the position/orientation based on push/turn recovery
 		        IndexedMatrix newTransform;
-		        TransformUtil.IntegrateTransform(GetWorldTransform(),m_pushVelocity,m_turnVelocity,timeStep,out newTransform);
+		        TransformUtil.IntegrateTransform(GetWorldTransform(),MPushVelocity,MTurnVelocity,timeStep,out newTransform);
 		        SetWorldTransform(ref newTransform);
 		        //m_originalBody->setCompanionId(-1);
 	        }

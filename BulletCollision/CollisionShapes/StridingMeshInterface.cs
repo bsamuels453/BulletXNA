@@ -116,9 +116,9 @@ namespace BulletXNA.BulletCollision
                             //}
                         }
 #if XNA
-                        else if (vertexbase is ObjectArray<Microsoft.Xna.Framework.Vector3>)
+                        else if (vertexbase is ObjectArray<MonoGameUtility.Vector3>)
                         {
-                            Microsoft.Xna.Framework.Vector3[] vertexList = (vertexbase as ObjectArray<Microsoft.Xna.Framework.Vector3>).GetRawArray();
+                            MonoGameUtility.Vector3[] vertexList = (vertexbase as ObjectArray<MonoGameUtility.Vector3>).GetRawArray();
                             for (int gfxindex = 0; gfxindex < numtriangles; gfxindex++)
                             {
                                 int triIndex = (gfxindex * indexstride);

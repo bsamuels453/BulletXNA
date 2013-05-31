@@ -300,9 +300,9 @@ namespace BulletXNA.BulletCollision
                 }
             }
 #if XNA
-            else if (vertexBase is ObjectArray<Microsoft.Xna.Framework.Vector3>)
+            else if (vertexBase is ObjectArray<MonoGameUtility.Vector3>)
             {
-                Microsoft.Xna.Framework.Vector3[] vertexBaseRaw = ((ObjectArray<Microsoft.Xna.Framework.Vector3>)vertexBase).GetRawArray();
+                MonoGameUtility.Vector3[] vertexBaseRaw = ((ObjectArray<MonoGameUtility.Vector3>)vertexBase).GetRawArray();
                 for (int j = 2; j >= 0; j--)
                 {
                     m_triangle[j] = new IndexedVector3(vertexBaseRaw[indexRaw[indexIndex + j]]);

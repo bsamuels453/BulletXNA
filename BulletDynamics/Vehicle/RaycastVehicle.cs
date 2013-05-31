@@ -115,7 +115,7 @@ namespace BulletXNA.BulletDynamics
 
             Object object1 = m_vehicleRaycaster.CastRay(ref source, ref target, ref rayResults);
 
-            if (object1 != null && (object1 as RigidBody).m_debugBodyId != 1)
+            if (object1 != null && (object1 as RigidBody).MDebugBodyId != 1)
             {
                 int ibreak = 0;
             }
@@ -461,7 +461,7 @@ namespace BulletXNA.BulletDynamics
     	
 	    public void	UpdateSuspension(float deltaTime)
         {
-	        float chassisMass = 1f / m_chassisBody.GetInvMass();
+	        float chassisMass = 1f / m_chassisBody.InvMass;
         	
 	        for (int w_it=0; w_it<GetNumWheels(); w_it++)
 	        {

@@ -133,8 +133,8 @@ namespace BulletXNA.BulletDynamics
 
 
 			JacobianEntry jac = new JacobianEntry(m1, m2, rel_pos1, rel_pos2, normal,
-				body1.GetInvInertiaDiagLocal(), body1.GetInvMass(),
-				body2.GetInvInertiaDiagLocal(), body2.GetInvMass());
+				body1.GetInvInertiaDiagLocal(), body1.InvMass,
+				body2.GetInvInertiaDiagLocal(), body2.InvMass);
 
 			float jacDiagAB = jac.GetDiagonal();
 			float jacDiagABInv = 1f / jacDiagAB;
@@ -154,7 +154,7 @@ namespace BulletXNA.BulletDynamics
 
 			if (ONLY_USE_LINEAR_MASS)
 			{
-				float massTerm = 1f / (body1.GetInvMass() + body2.GetInvMass());
+				float massTerm = 1f / (body1.InvMass + body2.InvMass);
 				impulse = -contactDamping * rel_vel * massTerm;
 			}
 			else

@@ -27,8 +27,8 @@ using BulletXNA.BulletCollision;
 using BulletXNA.BulletDynamics;
 using BulletXNA.LinearMath;
 
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace BulletXNA
 {
@@ -131,7 +131,7 @@ namespace BulletXNA
 							}
 							float tws = pCT.GetTwistSpan();
 							float twa = pCT.GetTwistAngle();
-							bool useFrameB = (pCT.GetRigidBodyB().GetInvMass() > 0f);
+							bool useFrameB = (pCT.GetRigidBodyB().InvMass > 0f);
 							if (useFrameB)
 							{
 								tr = pCT.GetRigidBodyB().GetCenterOfMassTransform() *  pCT.GetBFrame();
@@ -234,17 +234,20 @@ namespace BulletXNA
 			}
 			return;
 		}
-
+        
 		public static ShapeData CreateCube()
 		{
 			IndexedMatrix identity = IndexedMatrix.Identity;
 			return CreateBox(IndexedVector3.Zero, new IndexedVector3(1), Color.Yellow, ref identity);
 		}
-
+        
+        
 		public static ShapeData CreateBox(IndexedVector3 position, IndexedVector3 sideLength, Color color, ref IndexedMatrix transform)
 		{
+            
 			ShapeData shapeData = new ShapeData(8, 36);
 			int index = 0;
+            
 			shapeData.m_verticesArray[index++] = new VertexPositionColor((transform * (position + new IndexedVector3(0, 0, 0))).ToVector3(), color);
             shapeData.m_verticesArray[index++] = new VertexPositionColor((transform * (position + new IndexedVector3(sideLength.X, 0, 0))).ToVector3(), color);
             shapeData.m_verticesArray[index++] = new VertexPositionColor((transform * (position + new IndexedVector3(sideLength.X, 0, sideLength.Z))).ToVector3(), color);
@@ -254,9 +257,11 @@ namespace BulletXNA
             shapeData.m_verticesArray[index++] = new VertexPositionColor((transform * (position + new IndexedVector3(sideLength.X, sideLength.Y, sideLength.Z))).ToVector3(), color);
             shapeData.m_verticesArray[index++] = new VertexPositionColor((transform * (position + new IndexedVector3(0, sideLength.Y, sideLength.Z))).ToVector3(), color);
 			shapeData.m_indexArray = DrawHelper.s_cubeIndices;
+
 			return shapeData;
 		}
-
+    
+        
 		public static ShapeData CreateSphere(int slices, int stacks, float radius, Color color)
 		{
 			ShapeData shapeData = new ShapeData((slices + 1) * (stacks + 1), (slices * stacks * 6));
@@ -306,6 +311,7 @@ namespace BulletXNA
 			return shapeData;
 		}
 
+         
 
 		public static short[] s_cubeIndices = new short[]{
                              0,1,2,2,3,0, // face A

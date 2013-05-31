@@ -600,8 +600,8 @@ namespace BulletXNA.BulletDynamics
 			// difference between frames in WCS
 			IndexedVector3 ofs = trB._origin - trA._origin;
 			// now get weight factors depending on masses
-			float miA = GetRigidBodyA().GetInvMass();
-			float miB = GetRigidBodyB().GetInvMass();
+			float miA = GetRigidBodyA().InvMass;
+			float miB = GetRigidBodyB().InvMass;
 			bool hasStaticBody = (miA < MathUtil.SIMD_EPSILON) || (miB < MathUtil.SIMD_EPSILON);
 			float miS = miA + miB;
 			float factA, factB;

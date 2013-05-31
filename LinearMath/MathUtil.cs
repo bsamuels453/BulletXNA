@@ -1351,14 +1351,14 @@ namespace BulletXNA
         }
 #if XNA
 
-        public static bool IsAlmostZero(Microsoft.Xna.Framework.Vector3 v)
+        public static bool IsAlmostZero(MonoGameUtility.Vector3 v)
         {
             if (Math.Abs(v.X) > 1e-6 || Math.Abs(v.Y) > 1e-6 || Math.Abs(v.Z) > 1e-6) return false;
             return true;
 
         }
 
-        public static bool IsAlmostZero(ref Microsoft.Xna.Framework.Vector3 v)
+        public static bool IsAlmostZero(ref MonoGameUtility.Vector3 v)
         {
             if (Math.Abs(v.X) > 1e-6 || Math.Abs(v.Y) > 1e-6 || Math.Abs(v.Z) > 1e-6) return false;
             return true;
@@ -1396,12 +1396,12 @@ namespace BulletXNA
 
 #if XNA
 
-        public static void PrintMatrix(TextWriter writer, Microsoft.Xna.Framework.Matrix m)
+        public static void PrintMatrix(TextWriter writer, MonoGameUtility.Matrix m)
         {
             PrintMatrix(writer, null, m);
         }
 
-        public static void PrintMatrix(TextWriter writer, String name, Microsoft.Xna.Framework.Matrix m)
+        public static void PrintMatrix(TextWriter writer, String name, MonoGameUtility.Matrix m)
         {
             if (writer != null)
             {
@@ -1417,12 +1417,12 @@ namespace BulletXNA
         }
 
 
-        public static void PrintVector3(TextWriter writer, Microsoft.Xna.Framework.Vector3 v)
+        public static void PrintVector3(TextWriter writer, MonoGameUtility.Vector3 v)
         {
             writer.WriteLine(String.Format("{{X:{0:0.00000000} Y:{1:0.00000000} Z:{2:0.00000000}}}", v.X, v.Y, v.Z));
         }
 
-        public static void PrintVector3(TextWriter writer, String name, Microsoft.Xna.Framework.Vector3 v)
+        public static void PrintVector3(TextWriter writer, String name, MonoGameUtility.Vector3 v)
         {
             writer.WriteLine(String.Format("[{0}] {{X:{1:0.00000000} Y:{2:0.00000000} Z:{3:0.00000000}}}", name, v.X, v.Y, v.Z));
         }

@@ -210,7 +210,7 @@ namespace BulletXNA.BulletDynamics
 
 		public override void GetInfo2(ConstraintInfo2 info)
 		{
-			GetInfo2NonVirtual(info, m_rbA.GetCenterOfMassTransform(), m_rbB.GetCenterOfMassTransform(), m_rbA.GetLinearVelocity(), m_rbB.GetLinearVelocity(), m_rbA.GetInvMass(), m_rbB.GetInvMass());
+			GetInfo2NonVirtual(info, m_rbA.GetCenterOfMassTransform(), m_rbB.GetCenterOfMassTransform(), m_rbA.GetLinearVelocity(), m_rbB.GetLinearVelocity(), m_rbA.InvMass, m_rbB.InvMass);
 		}
 
 		public void GetInfo2NonVirtual(ConstraintInfo2 info, IndexedMatrix transA, IndexedMatrix transB, IndexedVector3 linVelA, IndexedVector3 linVelB, float rbAinvMass, float rbBinvMass)

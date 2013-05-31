@@ -395,16 +395,16 @@ namespace BulletXNA.LinearMath
         }
 
 #if XNA
-        public IndexedMatrix(Microsoft.Xna.Framework.Matrix m)
+        public IndexedMatrix(MonoGameUtility.Matrix m)
         {
             _origin = new IndexedVector3(m.Translation);
             //_basis = new IndexedBasisMatrix(new IndexedVector3(m.Right), new IndexedVector3(m.Up), new IndexedVector3(m.Backward)).Transpose();
             _basis = new IndexedBasisMatrix(new IndexedVector3(m.Right), new IndexedVector3(m.Up), new IndexedVector3(m.Backward));
         }
 
-        public Microsoft.Xna.Framework.Matrix ToMatrix()
+        public MonoGameUtility.Matrix ToMatrix()
         {
-            Microsoft.Xna.Framework.Matrix m = Microsoft.Xna.Framework.Matrix.Identity;
+            MonoGameUtility.Matrix m = MonoGameUtility.Matrix.Identity;
             IndexedVector3 right;
             IndexedVector3 up;
             IndexedVector3 backward;
@@ -417,29 +417,29 @@ namespace BulletXNA.LinearMath
         }
 
         // User-defined conversion from IndexedVector3 to Vector3
-        public static implicit operator Microsoft.Xna.Framework.Matrix(IndexedMatrix im)
+        public static implicit operator MonoGameUtility.Matrix(IndexedMatrix im)
         {
             return im.ToMatrix();
         }
 
         // User-defined conversion from IndexedVector3 to Vector3
-        public static implicit operator IndexedMatrix(Microsoft.Xna.Framework.Matrix m)
+        public static implicit operator IndexedMatrix(MonoGameUtility.Matrix m)
         {
             IndexedMatrix im = new IndexedMatrix();
             im.SetOpenGLMatrix(m);
             return im;
         }
 
-        public void SetOpenGLMatrix(Microsoft.Xna.Framework.Matrix m)
+        public void SetOpenGLMatrix(MonoGameUtility.Matrix m)
         {
             _basis.SetOpenGLMatrix(m.Right, m.Up, m.Backward);
             _origin = m.Translation;
         }
 
 
-        public Microsoft.Xna.Framework.Matrix ToMatrixProjection()
+        public MonoGameUtility.Matrix ToMatrixProjection()
         {
-            Microsoft.Xna.Framework.Matrix matrix = Microsoft.Xna.Framework.Matrix.Identity;
+            MonoGameUtility.Matrix matrix = MonoGameUtility.Matrix.Identity;
             matrix.Right = _basis.GetColumn(0).ToVector3();
             matrix.Up = _basis.GetColumn(1).ToVector3();
             matrix.Backward = _basis.GetColumn(2).ToVector3();

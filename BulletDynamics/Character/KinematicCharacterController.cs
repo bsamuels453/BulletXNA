@@ -506,7 +506,7 @@ namespace BulletXNA.BulletDynamics
 				//m_rigidBody.getMotionState().getWorldTransform (out xform);
 				//IndexedVector3 up = xform.Up;
 				//up.Normalize ();
-				//float magnitude = (1.0f/m_rigidBody.getInvMass()) * 8.0f;
+				//float magnitude = (1.0f/m_rigidBody.InvMass) * 8.0f;
 				//m_rigidBody.applyCentralImpulse (up * magnitude);
 			}
 

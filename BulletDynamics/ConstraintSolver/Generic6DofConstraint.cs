@@ -151,9 +151,9 @@ namespace BulletXNA.BulletDynamics
 				pivotBInW - m_rbB.GetCenterOfMassPosition(),
 				normalWorld,
 				m_rbA.GetInvInertiaDiagLocal(),
-				m_rbA.GetInvMass(),
+				m_rbA.InvMass,
 				m_rbB.GetInvInertiaDiagLocal(),
-				m_rbB.GetInvMass());
+				m_rbB.InvMass);
 		}
 
 		protected virtual void BuildAngularJacobian(out JacobianEntry jacAngular, ref IndexedVector3 jointAxisW)
@@ -242,8 +242,8 @@ namespace BulletXNA.BulletDynamics
 			CalculateAngleInfo();
 			if (m_useOffsetForConstraintFrame)
 			{	//  get weight factors depending on masses
-				float miA = GetRigidBodyA().GetInvMass();
-				float miB = GetRigidBodyB().GetInvMass();
+				float miA = GetRigidBodyA().InvMass;
+				float miB = GetRigidBodyB().InvMass;
 				m_hasStaticBody = (miA < MathUtil.SIMD_EPSILON) || (miB < MathUtil.SIMD_EPSILON);
 				float miS = miA + miB;
 				if (miS > 0.0f)
@@ -505,8 +505,8 @@ namespace BulletXNA.BulletDynamics
 
 		public virtual void CalcAnchorPos() // overridable
 		{
-			float imA = m_rbA.GetInvMass();
-			float imB = m_rbB.GetInvMass();
+			float imA = m_rbA.InvMass;
+			float imB = m_rbB.InvMass;
 			float weight;
 			if (MathUtil.FuzzyZero(imB))
 			{
@@ -1244,8 +1244,8 @@ namespace BulletXNA.BulletDynamics
 
 			IndexedVector3 ftorqueAxis1 = IndexedVector3.Cross(rel_pos1, axis_normal_on_a);
 			IndexedVector3 ftorqueAxis2 = IndexedVector3.Cross(rel_pos2, axis_normal_on_a);
-            body1.InternalApplyImpulse(axis_normal_on_a * body1.GetInvMass(), body1.GetInvInertiaTensorWorld() * ftorqueAxis1, normalImpulse, "Generic6DoF body1");
-            body2.InternalApplyImpulse(axis_normal_on_a * body2.GetInvMass(), body2.GetInvInertiaTensorWorld() * ftorqueAxis2, -normalImpulse, "Generic6DoF body2");
+            body1.InternalApplyImpulse(axis_normal_on_a * body1.InvMass, body1.GetInvInertiaTensorWorld() * ftorqueAxis1, normalImpulse, "Generic6DoF body1");
+            body2.InternalApplyImpulse(axis_normal_on_a * body2.InvMass, body2.GetInvInertiaTensorWorld() * ftorqueAxis2, -normalImpulse, "Generic6DoF body2");
 
 			return normalImpulse;
 

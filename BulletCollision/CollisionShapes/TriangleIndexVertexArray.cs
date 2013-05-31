@@ -68,7 +68,7 @@ namespace BulletXNA.BulletCollision
                 indexedMesh.m_vertexStride = 1;
             }
 #if XNA
-            else if (vertexBase is ObjectArray<Microsoft.Xna.Framework.Vector3>)
+            else if (vertexBase is ObjectArray<MonoGameUtility.Vector3>)
             {
                 indexedMesh.m_vertexStride = 1;
             }

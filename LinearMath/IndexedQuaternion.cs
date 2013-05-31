@@ -111,7 +111,7 @@ namespace BulletXNA.LinearMath
         }
 
 #if XNA
-        public IndexedQuaternion(ref Microsoft.Xna.Framework.Quaternion q)
+        public IndexedQuaternion(ref MonoGameUtility.Quaternion q)
         {
             X = q.X;
             Y = q.Y;
@@ -119,19 +119,19 @@ namespace BulletXNA.LinearMath
             W = q.W;
         }
 
-        public IndexedQuaternion(Microsoft.Xna.Framework.Quaternion q)
+        public IndexedQuaternion(MonoGameUtility.Quaternion q)
         {
             X = q.X;
             Y = q.Y;
             Z = q.Z;
             W = q.W;
         }
-        public static implicit operator Microsoft.Xna.Framework.Quaternion(IndexedQuaternion q)
+        public static implicit operator MonoGameUtility.Quaternion(IndexedQuaternion q)
         {
-            return new Microsoft.Xna.Framework.Quaternion(q.X, q.Y, q.Z,q.W);
+            return new MonoGameUtility.Quaternion(q.X, q.Y, q.Z,q.W);
         }
 
-        public static implicit operator IndexedQuaternion(Microsoft.Xna.Framework.Quaternion q)
+        public static implicit operator IndexedQuaternion(MonoGameUtility.Quaternion q)
         {
             return new IndexedQuaternion(q.X, q.Y, q.Z,q.W);
         }
